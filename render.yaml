@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: ctfd
+    env: docker
+    plan: free  # Webサービスも無料プランに変更
+    image: ctfd/ctfd:latest  # Docker HubからCTFdイメージを取得
+    envVars:
+      - key: DATABASE_URL
+        value: mysql+pymysql://root:${DB_PASSWORD}@ctfd_db/ctfd
+      - key: REDIS_URL
+        value: redis://redis:6379/0
+      - key: CTFD_SECRET_KEY
+        value: ${CTFD_SECRET_KEY}
+      - key: SQLALCHEMY_TRACK_MODIFICATIONS
+        value: "False"
+    disk:
+      name: ctfd_data
+      mountPath: /var/ctfd
+      sizeGB: 1  # 必要なディスクサイズを指定
+    healthCheckPath: /
+    autoDeploy: true
+    privatePorts:
+      - port: 8000
+
+  - type: db
+    name: ctfd_db
+    plan: free  # データベースも無料プランに変更
+    engine: mysql
+    version: 8.0
+    disk:
+      name: mysql_data
+      sizeGB: 1  # ディスクサイズはプロジェクトに応じて変更
+    user: root
+    password: ${DB_PASSWORD}
+    databaseName: ctfd
+    autoDeploy: true
+
+  - type: redis
+    name: redis
+    plan: free  # Redisも無料プランに変更
+    disk:
+      name: redis_data
+      sizeGB: 1  # 必要に応じて Redis の永続化
+    autoDeploy: true
+
+envVars:
+  - key: DB_PASSWORD
+    value: your_mysql_password
+  - key: CTFD_SECRET_KEY
+    value: your_secret_key
