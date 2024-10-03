@@ -1,0 +1,32 @@
+# 環境変数ファイル
+.env
+
+# Docker関連のボリュームデータ（永続化データ）をGitから除外
+mysql_data/
+ctfd_data/
+redis_data/
+
+# ログファイル
+*.log
+
+# Python関連の不要ファイル（CTFdのカスタマイズにPythonが使われている場合）
+__pycache__/
+*.pyc
+*.pyo
+
+# MacOS関連の不要ファイル
+.DS_Store
+
+# Vim/Emacsなどの一時ファイル
+*.swp
+*.swo
+*~
+
+# VSCodeなどのエディタ設定ファイル（任意）
+.vscode/
+
+# Node.js関連の不要ファイル（CTFdのカスタマイズでフロントエンドを触る場合）
+node_modules/
+
+# IDE設定ファイル
+.idea/

@@ -1,0 +1,53 @@
+version: '3'
+services:
+  ctf:
+    image: ctfd/ctfd:latest
+    container_name: ctfd
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:${DB_PASSWORD}@ctfd_db/ctfd
+      - REDIS_URL=redis://redis:6379/0
+      - CTFD_SECRET_KEY=${CTFD_SECRET_KEY}
+      - SQLALCHEMY_TRACK_MODIFICATIONS=False
+    volumes:
+      - ./ctfd_data:/var/ctfd
+    depends_on:
+      - ctfd_db
+      - redis
+    networks:
+      - sail
+
+  ctfd_db:
+    image: 'mysql/mysql-server:8.0'
+    container_name: ctfd_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ctfd
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - sail
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - sail
+
+networks:
+  sail:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  ctfd_data:
+    driver: local
+  redis_data:
+    driver: local
